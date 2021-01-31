@@ -79,12 +79,13 @@
 
     Events.on(engine, 'collisionStart', function (event) {
         var pairs = event.pairs;
+        var merged=false;
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
             var minId = Math.min(pair.bodyA.id, pair.bodyB.id);
             if (minId <= 4) {
                 wall_coll[minId]++;
-            } else {
+            } else if(!merged) {
                 var a = pair.bodyA, b = pair.bodyB;
                 if (a.label == b.label) {
                     var blk = new_block(
@@ -96,7 +97,7 @@
                     World.remove(engine.world, b);
                     World.add(engine.world, blk);
                     score += Number(a.label) + Number(b.label);
-                    return; // Or everything will go wrong if several bloks appers in one place
+                    merged=1; // Or everything will go wrong if several bloks appers in one place
                 }
             }
         }
