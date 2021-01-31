@@ -208,6 +208,14 @@
         engine.world.gravity.x = Math.cos(gravity)
         engine.world.gravity.y = Math.sin(gravity)
 
+        for(var i=0;i<20;i++){
+            var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
+            var blk = new_block(newx, newy, (Math.random() < 0.2 ? "4" : "2"));
+            if(Ma.Query.collides(blk,engine.world.bodies).length==0){
+                World.add(engine.world, [blk]);
+                return;
+            }
+        }
         var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
         var blk = new_block(newx, newy, (Math.random() < 0.2 ? "4" : "2"));
         World.add(engine.world, [blk]);
