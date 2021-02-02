@@ -8,9 +8,9 @@
 </body>
 <script src="matter.min.js"></script>
 <script>
-    var box = document.getElementById("box")
+    var box = document.getElementById("box");
 
-    Ma = Matter
+    Ma = Matter;
 
     // module aliases
     var Engine = Ma.Engine,
@@ -26,32 +26,32 @@
     // create an engine
     var engine = Engine.create();
 
-    var a = 36;
+    var a = 40;
     // var a=40/(1+Math.sqrt(2))
     var octagon = [
-        { x: -a, y: 49 },
-        { x: a, y: 49 },
-        { x: 49, y: a },
-        { x: 49, y: -a },
-        { x: a, y: -49 },
-        { x: -a, y: -49 },
-        { x: -49, y: -a },
-        { x: -49, y: a },
+        { x: -a, y: 45 },
+        { x: a, y: 45 },
+        { x: 45, y: a },
+        { x: 45, y: -a },
+        { x: a, y: -45 },
+        { x: -a, y: -45 },
+        { x: -45, y: -a },
+        { x: -45, y: a },
     ];
     function new_block(x, y, label, angle = 0) {
         var options = {
             vertices: octagon,
             position: { x: x, y: y },
             label: label,
-            friction: 0.4,
-            frictionStatic: 1,
+            friction: 0.2,
+            frictionStatic: 0.25,
             angle: angle,
-            density: 0.001 * Number(label)
-        }
-        return Body.create(options)
+            density: 0.001 * Math.log(Number(label))
+        };
+        return Body.create(options);
     }
 
-    var colors = ["#DEB887", "#FFD700", "#FFA500", "#B8860B", "#CD853F", "#8B4513"]
+    var colors = ["#DEB887", "#FFD700", "#FFA500", "#B8860B", "#CD853F", "#8B4513"];
 
     var wall_options = { isStatic: true, label: "wall" };
     var floor = Bodies.rectangle(300, 550, 600, 100, wall_options);
@@ -73,21 +73,22 @@
     canvas.width = 800;
     canvas.height = 600;
     var gravity = Math.PI / 2;
-    var score = 0, over = false;
+    var score = 0, over = false, wei = false, wei_begin;
 
     var wall_coll = [0, 0, 0, 0, 0];
 
     Events.on(engine, 'collisionStart', function (event) {
         var pairs = event.pairs;
-        var merged=false;
+        var merged = false;
         for (var i = 0; i < pairs.length; i++) {
             var pair = pairs[i];
             var minId = Math.min(pair.bodyA.id, pair.bodyB.id);
             if (minId <= 4) {
                 wall_coll[minId]++;
-            } else if(!merged) {
+            } else if (!merged) {
                 var a = pair.bodyA, b = pair.bodyB;
                 if (a.label == b.label) {
+                    console.log(pair);
                     var blk = new_block(
                         (a.position.x + b.position.x) / 2,
                         (a.position.y + b.position.y) / 2,
@@ -97,7 +98,7 @@
                     World.remove(engine.world, b);
                     World.add(engine.world, blk);
                     score += Number(a.label) + Number(b.label);
-                    merged=1; // Or everything will go wrong if several bloks appers in one place
+                    merged = 1; // Or everything will go wrong if several bloks appers in one place
                 }
             }
         }
@@ -116,6 +117,7 @@
 
     (function render() {
         var bodies = Composite.allBodies(engine.world);
+        now=new Date();
 
         window.requestAnimationFrame(render);
 
@@ -128,7 +130,7 @@
         context.beginPath();
         context.arc(300, 300, 600, gravity - Math.PI / 30, gravity + Math.PI / 30);
         context.lineTo(300, 300);
-        context.fill();context.save();
+        context.fill(); context.save();
         context.strokeStyle = "#CEC87C";
         context.lineWidth = 10;
         context.rotate(gravity);
@@ -157,6 +159,13 @@
         context.font = "48px Clear Sans";
         context.fillText(String(score), 700, 200);
 
+        if(wei&&!over){
+            context.save();
+            context.fillStyle = "red";
+            context.font = "24px Clear Sans";
+            context.fillText(((now.getTime()-wei_begin)/1000).toFixed(3), 700, 500);
+            context.restore();
+        }
 
         context.lineJoin = "round";
         context.lineWidth = 2;
@@ -197,7 +206,14 @@
 
         var gg = true;
         for (var i = 1; i <= 4; i++)if (wall_coll[i] == 0) gg = false;
-        if (gg) over = true;
+        if (gg && !wei) {
+            wei = true;
+            wei_begin = now.getTime();
+        } else if (!gg && wei) {
+            wei = false;
+        } else if (gg) {
+            if (now.getTime() - wei_begin > 2000) over = true;
+        }
     })();
 
     function clk(e) {
@@ -209,10 +225,10 @@
         engine.world.gravity.x = Math.cos(gravity)
         engine.world.gravity.y = Math.sin(gravity)
 
-        for(var i=0;i<20;i++){
+        for (var i = 0; i < 20; i++) {
             var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
             var blk = new_block(newx, newy, (Math.random() < 0.2 ? "4" : "2"));
-            if(Ma.Query.collides(blk,engine.world.bodies).length==0){
+            if (Ma.Query.collides(blk, engine.world.bodies).length == 0) {
                 World.add(engine.world, [blk]);
                 return;
             }
@@ -223,6 +239,26 @@
     }
     box.onclick = clk;
 
+    secret = "";
+    document.onkeypress = (function (event) {
+        var e = event || window.event;
+        if (secret == "5") {
+            if (e.keyCode == 106) gravity = -Math.PI / 2;
+            if (e.keyCode == 107) gravity = Math.PI / 2;
+            if (e.keyCode == 108) gravity = 0;
+            if (e.keyCode == 104) gravity = Math.PI;
+            if (e.keyCode == 102) {
+                for (var i = 0; i < 10; i++) {
+                    var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
+                    var blk = new_block(newx, newy, (Math.random() < 0.2 ? "4" : "2"));
+                    World.add(engine.world, [blk]);
+                }
+            }
+        } else if (e.keyCode == 119) secret = "w";
+        else if (e.keyCode == 98 && secret == "w") secret = "b";
+        else if (e.keyCode == 53 && secret == "b") secret = "5";
+        console.log(e.keyCode, secret);
+    });
 </script>
 
 </html>
