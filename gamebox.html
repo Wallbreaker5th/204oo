@@ -40,15 +40,13 @@
     ];
     function new_block(x, y, label, angle = 0) {
         var options = {
-            vertices: octagon,
-            position: { x: x, y: y },
             label: label,
             friction: 0.2,
             frictionStatic: 0.25,
             angle: angle,
             density: 0.001 * Math.log(Number(label))
         };
-        return Body.create(options);
+        return Bodies.fromVertices(x,y,octagon,options);
     }
 
     var colors = ["#DEB887", "#FFD700", "#FFA500", "#B8860B", "#CD853F", "#8B4513"];
@@ -88,7 +86,6 @@
             } else if (!merged) {
                 var a = pair.bodyA, b = pair.bodyB;
                 if (a.label == b.label) {
-                    console.log(pair);
                     var blk = new_block(
                         (a.position.x + b.position.x) / 2,
                         (a.position.y + b.position.y) / 2,
@@ -221,9 +218,9 @@
         var e = e || window.event;
         var x = e.clientX - 300, y = e.clientY - 300;
         if ((x > -200 && x < 200 && y > -200 && y < 200) || (x < -300 || y < -300 || x > 300 || y > 300)) return;
-        gravity = Math.atan2(y, x)
-        engine.world.gravity.x = Math.cos(gravity)
-        engine.world.gravity.y = Math.sin(gravity)
+        gravity = Math.atan2(y, x);
+        engine.world.gravity.x = Math.cos(gravity);
+        engine.world.gravity.y = Math.sin(gravity);
 
         for (var i = 0; i < 20; i++) {
             var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
@@ -243,10 +240,12 @@
     document.onkeypress = (function (event) {
         var e = event || window.event;
         if (secret == "5") {
-            if (e.keyCode == 106) gravity = -Math.PI / 2;
-            if (e.keyCode == 107) gravity = Math.PI / 2;
+            if (e.keyCode == 107) gravity = -Math.PI / 2;
+            if (e.keyCode == 106) gravity = Math.PI / 2;
             if (e.keyCode == 108) gravity = 0;
             if (e.keyCode == 104) gravity = Math.PI;
+            engine.world.gravity.x = Math.cos(gravity);
+            engine.world.gravity.y = Math.sin(gravity);
             if (e.keyCode == 102) {
                 for (var i = 0; i < 10; i++) {
                     var newx = Math.random() * 300 + 150, newy = Math.random() * 300 + 150;
