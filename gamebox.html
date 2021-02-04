@@ -26,17 +26,17 @@
     // create an engine
     var engine = Engine.create();
 
-    var a = 40;
+    var a = 38;
     // var a=40/(1+Math.sqrt(2))
     var octagon = [
-        { x: -a, y: 45 },
-        { x: a, y: 45 },
-        { x: 45, y: a },
-        { x: 45, y: -a },
-        { x: a, y: -45 },
-        { x: -a, y: -45 },
-        { x: -45, y: -a },
-        { x: -45, y: a },
+        { x: -a, y: 46 },
+        { x: a, y: 46 },
+        { x: 46, y: a },
+        { x: 46, y: -a },
+        { x: a, y: -46 },
+        { x: -a, y: -46 },
+        { x: -46, y: -a },
+        { x: -46, y: a },
     ];
     function new_block(x, y, label, angle = 0) {
         var options = {
@@ -44,7 +44,8 @@
             friction: 0.2,
             frictionStatic: 0.25,
             angle: angle,
-            density: 0.001 * Math.log(Number(label))
+            density: 0.001 * Math.log(Number(label)),
+            restitution: 0.7
         };
         return Bodies.fromVertices(x,y,octagon,options);
     }
