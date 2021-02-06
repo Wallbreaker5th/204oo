@@ -5,17 +5,38 @@
 <head>
     <title>204∞ - 有重力的 2048</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="user-scalable=0">
+    <style>
+        p {
+            padding-left: 20px;
+            color: #6B3513;
+        }
+
+        #footer {
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            width: 100%;
+        }
+
+        a {
+            color: #6B3513;
+        }
+    </style>
 </head>
 
 <body style="background-color: #FFF8DC;">
     <div style="margin: auto;width: 840px;">
-        <iframe style="margin:10px; height:620px; width:820px;"
-            src="gamebox.html" frameborder="0"></iframe>
-        <p style="padding-left:20px; color:#6B3513">
+        <iframe style="margin:10px; height:620px; width:820px;" src="gamebox.html" frameborder="0"></iframe>
+        <p>
             点击橄榄色区域改变重力方向。<b>当四面都有方块接触，且持续 2 秒后游戏结束。</b></br>
             灵感来源于《2048》与《合成大西瓜》</br>
             By 破壁人五号（Wallbreaker5t<span id="secret">h</span>）</br>
-            <script type="text/javascript">document.write(unescape("%3Cspan id='cnzz_stat_icon_1279662773'%3E%3C/span%3E%3Cscript src='https://s4.cnzz.com/z_stat.php%3Fid%3D1279662773%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>        </p>
+        </p>
+        <footer id="footer" style="color:6B3513">
+            <script type="text/javascript"
+                src="https://s4.cnzz.com/z_stat.php?id=1279662773&web_id=1279662773"></script>
+        </footer>
     </div>
 </body>
 
